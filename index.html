@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Selection</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .gift-list { max-width: 400px; margin: auto; }
+        .gift-item { display: flex; justify-content: space-between; margin: 10px 0; padding: 10px; border: 1px solid #ddd; cursor: pointer; }
+        .selected { background-color: #f8d7da; }
+        button { margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Select Your Gift</h2>
+    <div id="giftList" class="gift-list"></div>
+
+    <script>
+        const gifts = ["Watch", "Phone", "Headphones", "Laptop", "Tablet"];
+        const giftList = document.getElementById("giftList");
+        let selectedGifts = JSON.parse(localStorage.getItem("selectedGifts")) || {};
+
+        function renderGifts() {
+            giftList.innerHTML = "";
+            gifts.forEach(gift => {
+                const div = document.createElement("div");
+                div.className = `gift-item ${selectedGifts[gift] ? 'selected' : ''}`;
+                div.textContent = gift;
+                div.onclick = () => toggleSelection(gift);
+                
+                if (selectedGifts[gift]) {
+                    const removeBtn = document.createElement("button");
+                    removeBtn.textContent = "Remove";
+                    removeBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        delete selectedGifts[gift];
+                        saveAndRender();
+                    };
+                    div.appendChild(removeBtn);
+                }
+                giftList.appendChild(div);
+            });
+        }
+
+        function toggleSelection(gift) {
+            if (selectedGifts[gift]) return;
+            selectedGifts[gift] = true;
+            saveAndRender();
+        }
+
+        function saveAndRender() {
+            localStorage.setItem("selectedGifts", JSON.stringify(selectedGifts));
+            renderGifts();
+        }
+
+        renderGifts();
+    </script>
+</body>
+</html>
